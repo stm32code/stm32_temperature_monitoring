@@ -1,0 +1,48 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.ThresholdMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加阀值记录 -->
+	<insert id="addThreshold" parameterType="threshold">
+		insert into t_threshold(upperLimit,lowerLimit,addTime) values 
+		(#{upperLimit},#{lowerLimit},#{addTime})
+	</insert>
+
+	<!-- 按照查询条件分页查询阀值记录 -->
+	<select id="queryThreshold" resultMap="thresholdMap" >
+		select t_threshold.* from t_threshold ${where} order by t_threshold.addTime DESC limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="thresholdMap" type="threshold">
+        <id property="thresholdId" column="thresholdId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有阀值记录 -->
+	<select id="queryThresholdList" resultMap="thresholdMap" >
+		select t_threshold.* from t_threshold ${where} order by t_threshold.addTime DESC
+	</select>
+
+    <!-- 按照查询条件的阀值记录数 -->
+	<select id="queryThresholdCount" resultType="int">
+		select count(*) from t_threshold ${where}
+	</select>
+
+	<!-- 根据主键查询某个阀值记录 -->
+	<select id="getThreshold" parameterType="int" resultMap="thresholdMap">
+		select * from t_threshold where t_threshold.thresholdId = #{thresholdId}
+	</select>
+
+	<!-- 更新阀值记录 -->
+	<update id="updateThreshold" parameterType="threshold">
+		update t_threshold set upperLimit=#{upperLimit},lowerLimit=#{lowerLimit},addTime=#{addTime} where thresholdId = #{thresholdId}
+	</update>
+
+	<!-- 删除阀值记录 -->
+	<delete id="deleteThreshold" parameterType="int">
+		delete from t_threshold where thresholdId=#{thresholdId}
+	</delete>
+
+</mapper>

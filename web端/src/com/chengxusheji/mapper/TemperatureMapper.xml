@@ -1,0 +1,48 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.TemperatureMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加温度记录 -->
+	<insert id="addTemperature" parameterType="temperature">
+		insert into t_temperature(temperatureValue,temperatureTime) values 
+		(#{temperatureValue},#{temperatureTime})
+	</insert>
+
+	<!-- 按照查询条件分页查询温度记录 -->
+	<select id="queryTemperature" resultMap="temperatureMap" >
+		select t_temperature.* from t_temperature ${where} order by t_temperature.temperatureTime DESC limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="temperatureMap" type="temperature">
+        <id property="temperatureId" column="temperatureId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有温度记录 -->
+	<select id="queryTemperatureList" resultMap="temperatureMap" >
+		select t_temperature.* from t_temperature ${where}
+	</select>
+
+    <!-- 按照查询条件的温度记录数 -->
+	<select id="queryTemperatureCount" resultType="int">
+		select count(*) from t_temperature ${where}
+	</select>
+
+	<!-- 根据主键查询某个温度记录 -->
+	<select id="getTemperature" parameterType="int" resultMap="temperatureMap">
+		select * from t_temperature where t_temperature.temperatureId = #{temperatureId}
+	</select>
+
+	<!-- 更新温度记录 -->
+	<update id="updateTemperature" parameterType="temperature">
+		update t_temperature set temperatureValue=#{temperatureValue},temperatureTime=#{temperatureTime} where temperatureId = #{temperatureId}
+	</update>
+
+	<!-- 删除温度记录 -->
+	<delete id="deleteTemperature" parameterType="int">
+		delete from t_temperature where temperatureId=#{temperatureId}
+	</delete>
+
+</mapper>
